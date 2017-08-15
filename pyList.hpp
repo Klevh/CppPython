@@ -57,8 +57,9 @@ class List{
   List<T>& operator+=(const List<T>& l);
   List<T>& operator*=(const unsigned& times);
   //overloading of [] accessor, one with unsigned to access values, one with string to copy a part of the list like in python
-  T& operator[](const int& id) const;
-  List<T> operator[](const string& s);
+  T& operator[](int id) const;
+  List<T> operator[](const string& s) const;
+  List<T> operator[](const char * s) const;
   //overloading of List*unsigned operator
   List<T> operator*(const unsigned times);
   //getLength method, used in len function
@@ -73,7 +74,7 @@ class List{
   List<T>& operator<<(const T& val);
   List<T>& operator>>(T& val);
   //overloading of cast from List to string
-  operator const string();
+  explicit operator const string();
     
   //list creation operator, is the same as the python syntax l=[1,2,3,4], if a list is inside, for example l2(1,2,l), it will result as l2(1,2,1,2,3,4)
   template <class ...U>
@@ -268,7 +269,7 @@ List<T>& List<T>::operator*=(const unsigned& times){
 
 //[int] operator : accessor to the list's elements, allow doing like in python : l[-1], l[5]=5, ...
 template <class T>
-T& List<T>::operator[](const int& id) const{
+T& List<T>::operator[](int id) const{
   Element<T> * curr = first;
   unsigned i;
     
@@ -287,7 +288,7 @@ T& List<T>::operator[](const int& id) const{
 
 //[string] operator : return a sublist of your list depending of the range described by the string : l[::-1], l[:3], l[2:], l[1:8:3], ...
 template <class T>
-List<T> List<T>::operator[](const string& s){
+List<T> List<T>::operator[](const string& s) const{
   long int i = 0, j = 0, k = 0; //three numbers of the range : l[i:j:k]
   int signe=1; //used to remember the signe while translating characters to number
   bool guessI=false, guessJ=false; //those bools are set to true if the variable (i and j respectively) had to be guessed
@@ -410,6 +411,11 @@ List<T> List<T>::operator[](const string& s){
   }
     
   return res;
+}
+
+template <class T>
+List<T> List<T>::operator[](const char * s) const{
+  return (*this)[string(s)];
 }
 
 //* operator : do like *= operator but instead of modifying our list, it creates a new list
