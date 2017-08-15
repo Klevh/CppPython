@@ -5,6 +5,7 @@
 #include <string>
 #include <stdexcept>
 #include <sstream>
+#include <functional>
 #include "CustomOperators/CustomOperators.hpp"
 using std::cout;
 using std::endl;
@@ -12,6 +13,7 @@ using std::ostream;
 using std::range_error;
 using std::string;
 using std::ostringstream;
+using std::function;
 
 // ---------------------------------------------------------------------------
 //python's lists
@@ -217,6 +219,8 @@ List<T>& List<T>::operator=(const List<T>& l){
     append(*it);
     ++it;
   }
+
+  return *this;
 }
 
 //+ operator : create a new list and append all the element of our list into it, then all the element of the other list, and return it
@@ -268,7 +272,7 @@ T& List<T>::operator[](const int& id) const{
   Element<T> * curr = first;
   unsigned i;
     
-  if(id>=size || id<-(int)size)//throw an error when the id is out of range
+  if(static_cast<unsigned>(id)>=size || id<-(int)size)//throw an error when the id is out of range
     throw range_error("List : [int] : id out of range exception");
   if(id<0)//convert negative id into positive one
     i = size + id;
@@ -284,7 +288,7 @@ T& List<T>::operator[](const int& id) const{
 //[string] operator : return a sublist of your list depending of the range described by the string : l[::-1], l[:3], l[2:], l[1:8:3], ...
 template <class T>
 List<T> List<T>::operator[](const string& s){
-  int i = 0, j = 0, k = 0; //three numbers of the range : l[i:j:k]
+  long int i = 0, j = 0, k = 0; //three numbers of the range : l[i:j:k]
   int signe=1; //used to remember the signe while translating characters to number
   bool guessI=false, guessJ=false; //those bools are set to true if the variable (i and j respectively) had to be guessed
   unsigned id =0;//tells where we are in the string to analyse it
@@ -363,9 +367,9 @@ List<T> List<T>::operator[](const string& s){
     j=size+j+1;
         
   //we throw out of range exception if we need to
-  if(i<0 || i>=size)
+  if(i<0 || static_cast<unsigned>(i)>=size)
     throw range_error("List : [string] : first index out of range");
-  if(j<0 || j>size)
+  if(j<0 || static_cast<unsigned>(j)>size)
     throw range_error("List : [string] : second index out of range");
         
   //the increment has to be different from zero, if not, error
@@ -380,9 +384,9 @@ List<T> List<T>::operator[](const string& s){
     if(guessJ)
       j=size;
     curr=first;
-    for(unsigned a=0;a<i;++a)
+    for(int a=0;a<i;++a)
       curr=curr->next;
-    for(unsigned a=i;a<j;a+=k){
+    for(int a=i;a<j;a+=k){
       res.append(curr->value);
       curr=curr->next;
       for(int i=0;i<k-1 && curr;++i)
@@ -395,9 +399,9 @@ List<T> List<T>::operator[](const string& s){
     if(guessI)
       i=size;
     curr=first;
-    for(unsigned a=0;a<j;++a)
+    for(int a=0;a<j;++a)
       curr=curr->next;
-    for(unsigned a=j;a<i;a-=k){
+    for(int a=j;a<i;a-=k){
       res.insert(0,curr->value);
       curr=curr->next;
       for(int i=0;i>k+1 && curr;--i)
@@ -456,14 +460,16 @@ bool List<T>::append(T value){
 template <class T>
 bool List<T>::insert(int id,T value){
   Element<T> ** curr=&first, *tmp;
-    
-  if(id>size)
+
+  if(id<0)
+    id=size+id;
+  if(id<0 || static_cast<unsigned>(id)>size)
     throw range_error("List : insert : index out of bound");
     
-  if(id==size){
+  if(static_cast<unsigned>(id)==size){
     return append(value);
   }else{
-    for(unsigned i=0;i<id;++i)
+    for(unsigned i=0;i<static_cast<unsigned>(id);++i)
       curr=&((*curr)->next);
     
     tmp=*curr;
@@ -681,4 +687,20 @@ bool List<T>::iterator::end(){
 }
 // ---------------------------------------------------------------------------
 
+
+
+
+// List new operators
+namespace List_operator{
+    template <class T>
+    Custom_operator::operator_lhs <function<bool(T,const List<T>&)>> in(){
+        return {[](T v,const List<T>& l){
+            for(T i : l)
+                if(i==v)
+                    return true;
+            return false;
+        }};
+    }
+}
+// ---------------------------------------------------------------------------
 #endif

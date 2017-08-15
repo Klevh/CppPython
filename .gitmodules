@@ -1,0 +1,3 @@
+[submodule "CustomOperators"]
+	path = CustomOperators
+	url = git@github.com:Klevh/CustomOperators.git

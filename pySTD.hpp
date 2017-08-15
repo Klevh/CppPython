@@ -11,6 +11,7 @@ using std::ostream;
 using std::string;
 using std::stringstream;
 using std::cin;
+using namespace List_operator;
 
 // ---------------------------------------------------------------------------
 //Standard function
@@ -190,7 +191,7 @@ template <class T,class ...U>
 void print(string s, T value, U ...args){
   stringstream ss;
   unsigned long size=s.length(), deb=0,fin=0;
-  unsigned long id,idGen=-1;
+  unsigned long id,idGen=static_cast<unsigned>(-1);
   bool findNonGen=false, isFormated = false;
     
   id=s.find_first_of('{');
@@ -221,7 +222,7 @@ void print(string s, T value, U ...args){
 	    ss<<value;
 	    s=s.substr(0,deb)+ss.str()+s.substr(fin+1);
 	    findNonGen=true;
-	  }else if(idGen==-1){
+	  }else if(idGen==static_cast<unsigned>(-1)){
 	    idGen=deb;
 	  }
 	}

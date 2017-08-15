@@ -4,8 +4,8 @@ OFILES=main.o
 OFILESDEST=main.o ../pyList.hpp
 EXEC=pyTest
 
-LDFLAGS=-std=c++11
-CFLAGS=-Wall -Wextra -ansi -pedantic -Wextra -Wchar-subscripts -Wdouble-promotion -Werror -Wcomment -Wformat -std=c++11
+LDFLAGS=-std=c++14
+CFLAGS=-Wall -Wextra -std=c++14
 
 CC=g++
 
