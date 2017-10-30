@@ -59,7 +59,6 @@ class List{
   //overloading of [] accessor, one with unsigned to access values, one with string to copy a part of the list like in python
   T& operator[](int id) const;
   List<T> operator[](const string& s) const;
-  List<T> operator[](const char * s) const;
   //overloading of List*unsigned operator
   List<T> operator*(const unsigned times);
   //getLength method, used in len function
@@ -411,11 +410,6 @@ List<T> List<T>::operator[](const string& s) const{
   }
     
   return res;
-}
-
-template <class T>
-List<T> List<T>::operator[](const char * s) const{
-  return (*this)[string(s)];
 }
 
 //* operator : do like *= operator but instead of modifying our list, it creates a new list
